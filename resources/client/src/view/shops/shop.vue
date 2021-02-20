@@ -120,6 +120,7 @@
     import {mapMutations} from 'vuex'
     import dayjs from "dayjs";
     import {shopCheck, shopDel, shopIndex, shopStore, shopUpdate} from "@/api/shop";
+    import {SELECT_CHSNGE} from "@common@/bus/bus-constant";
 
     export default {
         data() {
@@ -187,7 +188,7 @@
                 },
                 columnsTable: [
                     {
-                        title: '下单时间',
+                        title: '创建时间',
                         slot: 'created_at'
                     },
                     {
@@ -303,6 +304,9 @@
                 this.initData()
             },
             initData() {
+
+                this.$bus.$emit(SELECT_CHSNGE);
+
                 //提交之前对表单的时间操作一下
                 this.formData.beginDate = dayjs(this.formData.beginDate).format('YYYY-MM-DD 00:00:00')
                 this.formData.endDate = dayjs(this.formData.endDate).format('YYYY-MM-DD 23:59:59')

@@ -53,7 +53,6 @@ export default [
     },
 
 
-
     {
         path: '/shops',
         name: 'shops',
@@ -121,10 +120,21 @@ export default [
                 },
                 component: () => import('@/view/statistics/statistics_good.vue')
             },
+            {
+                path: 'statistics_single',
+                name: 'statistics_single',
+                meta: {
+                    tagOne: true,
+                    hideInMenu: true,
+                    notCache: false,
+                    title: '单次',
+                    beforeCloseName: 'before_close_normal'
+                },
+                component: () => import('@/view/statistics/statistics_single.vue')
+            },
 
         ]
     },
-
 
 
     {

@@ -24,9 +24,22 @@ Route::namespace('Client')->group(function ($router) {
         Route::any('checkExist', 'GoodController@checkExist');
     });
 
+    Route::prefix('statistics')->group(function () {
+        Route::any('checkExist', 'StatisticsController@checkExist');
+    });
+
+
+    Route::prefix('statisticsSingle')->group(function () {
+        Route::any('decrement', 'StatisticsSingleController@decrement');
+    });
+
+
+
     Route::resources([
         'shop' => "ShopController",
         'good' => "GoodController",
+        'statistics' => "StatisticsController",
+        'statisticsSingle' => "StatisticsSingleController",
     ]);
 });
 

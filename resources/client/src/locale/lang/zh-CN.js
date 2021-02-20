@@ -48,7 +48,8 @@ export default {
 
     shop: '商店',
     good: '商品',
-    statistics_good: '统计',
+    statistics_good: '统计列表',
+    statistics_single: '单次统计',
 
 
 

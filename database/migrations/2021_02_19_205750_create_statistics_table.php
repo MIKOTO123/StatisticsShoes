@@ -15,6 +15,7 @@ class CreateStatisticsTable extends Migration
     {
         Schema::create('statistics', function (Blueprint $table) {
             $table->id();
+            $table->string('statistics_name')->unique()->comment('这次统计的名称');
             $table->timestamps();
         });
     }

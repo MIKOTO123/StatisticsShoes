@@ -6,7 +6,7 @@
     <div class="login">
         <div style="padding-top: 50px; text-align: center;">
             <img src="~@/assets/images/login-logo-client.png" style="display: block; margin: 0 auto;"/>
-            <p class="login-logo-txt">会员通知系统</p>
+            <p class="login-logo-txt">商品统计系统</p>
         </div>
         <div class="login-con">
             <Card icon="log-in" title="欢迎登录" :bordered="false">
