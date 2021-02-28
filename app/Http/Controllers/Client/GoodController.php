@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Custom\Utils\PathUtils;
 use App\Http\Controllers\Controller;
+use App\Imports\GoodToShopImport;
+use App\Imports\ShopImport;
 use App\Models\Good;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 
 class GoodController extends Controller
 {
@@ -24,7 +28,7 @@ class GoodController extends Controller
 
         $query = Good::whereBetween('goods.created_at', [$beginDate, $endDate])
             ->leftJoin('shops', 'shops.id', '=', 'goods.shop_id')
-        ->select('goods.*','shops.shop_name');
+            ->select('goods.*', 'shops.shop_name');
         if ($searchValue) {
             $query->where('shop_name', 'like', "%" . $searchValue . "%");
         }
@@ -142,6 +146,15 @@ class GoodController extends Controller
         } else {
             return $this->ajaxSuccessResponse('', []);
         }
+    }
+
+
+    public function goodImport($shop_id)
+    {
+        $file_path = request()->file('file')->store(PathUtils::getUploadImportGoodPath());
+        $shopImport = new GoodToShopImport($shop_id);
+        Excel::import($shopImport, $file_path);
+        return '导入成功';
     }
 
 

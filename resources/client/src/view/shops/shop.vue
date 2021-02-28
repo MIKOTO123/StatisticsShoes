@@ -10,6 +10,19 @@
                            style="width: 200px; margin-right: 10px;"></Input>
                     <Button type="primary" ghost @click="pageChange(1)">查询</Button>
                     <Button type="primary" ghost @click="clickAdd">增加</Button>
+                    <div style="display: inline-block;">
+                        <Upload
+                            :show-upload-list="false"
+                            :on-success="UploadSuccess"
+                            :on-exceeded-size="handleMaxSize"
+                            :max-size="10240"
+                            :format="['xls','xlsx']"
+                            :on-format-error="handleFormatError"
+                            action="/client/shop/shopImport"
+                        >
+                            <Button>导入</Button>
+                        </Upload>
+                    </div>
                 </FormItem>
             </Form>
             <Table border :columns="columnsTable" :data="dataTable">
@@ -30,6 +43,19 @@
                             @click="clickDel(row.id)">删除
                     </Button>
 
+                    <div style="display: inline-block;">
+                        <Upload
+                            :show-upload-list="false"
+                            :on-success="UploadSuccess"
+                            :on-exceeded-size="handleMaxSize"
+                            :max-size="10240"
+                            :format="['xls','xlsx']"
+                            :on-format-error="handleFormatError"
+                            :action="'/client/good/goodImport/'+row.id"
+                        >
+                            <Button type="primary" size="small">导入</Button>
+                        </Upload>
+                    </div>
 
 
                 </template>
@@ -212,6 +238,24 @@
         },
         name: 'shop',
         methods: {
+
+
+            UploadSuccess(res, file) {
+                this.$Message.success(res);
+                this.initData()
+            },
+            handleMaxSize(file) {
+                this.$Notice.warning({
+                    title: '超出文件限制大小',
+                    desc: '文件:' + file.name + '超过10M.'
+                });
+            },
+            handleFormatError(file) {
+                this.$Notice.warning({
+                    title: '文件格式不正确',
+                    desc: 'File format of ' + file.name + ' is incorrect, please select jpg or png.'
+                });
+            },
 
             clickAdd() {
                 this.modalAddShop = true;

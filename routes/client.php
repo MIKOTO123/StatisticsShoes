@@ -18,10 +18,12 @@ Route::namespace('Client')->group(function ($router) {
     Route::prefix('shop')->group(function () {
         Route::any('checkExist', 'ShopController@checkExist');
         Route::any('getOptionsShop', 'ShopController@getOptionsShop');
+        Route::any('shopImport', 'ShopController@shopImport');
     });
 
     Route::prefix('good')->group(function () {
         Route::any('checkExist', 'GoodController@checkExist');
+        Route::any('goodImport/{shop_id}', 'GoodController@goodImport');
     });
 
     Route::prefix('statistics')->group(function () {
@@ -31,6 +33,7 @@ Route::namespace('Client')->group(function ($router) {
 
     Route::prefix('statisticsSingle')->group(function () {
         Route::any('decrement', 'StatisticsSingleController@decrement');
+        Route::any('uploadImport/{s_id}', 'StatisticsSingleController@uploadImport');
     });
 
 
@@ -40,6 +43,7 @@ Route::namespace('Client')->group(function ($router) {
         'good' => "GoodController",
         'statistics' => "StatisticsController",
         'statisticsSingle' => "StatisticsSingleController",
+        'importError' => "ImportErrorController",
     ]);
 });
 

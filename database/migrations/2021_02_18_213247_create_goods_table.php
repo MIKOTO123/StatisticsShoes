@@ -16,7 +16,7 @@ class CreateGoodsTable extends Migration
         Schema::create('goods', function (Blueprint $table) {
             $table->id();
             $table->string('g_name')->comment("商品");
-            $table->string('mark')->comment("备注");
+            $table->string('mark')->nullable()->comment("备注");
             $table->string('shop_id')->comment("商店id");
             $table->unique(['shop_id', 'g_name']);//一个商店不能有同样名字的商品
             $table->timestamps();

@@ -28,6 +28,10 @@ Artisan::command('inspire', function () {
 //方便调试命令
 Artisan::command('test', function () {
 
+    Schema::table('statistics_singles', function (Blueprint $table) {
+        $table->string('size')->comment('码数');
+    });
+
     $this->comment("test sent");
 })->describe('Send news');
 

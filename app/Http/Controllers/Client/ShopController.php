@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Custom\Utils\PathUtils;
 use App\Http\Controllers\Controller;
+use App\Imports\GoodImport;
+use App\Imports\ShopImport;
 use App\Models\Good;
 use App\Models\Shop;
+use App\Models\Statistics;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 use mysql_xdevapi\Exception;
 
 class ShopController extends Controller
@@ -146,8 +151,20 @@ class ShopController extends Controller
     public function getOptionsShop()
     {
         $shops = Shop::all();
-        return $this->ajaxSuccessResponse('',$shops);
+        return $this->ajaxSuccessResponse('', $shops);
+    }
+
+    public function shopImport()
+    {
+        $file_path = request()->file('file')->store(PathUtils::getUploadImportShopPath());
+        $shopImport = new ShopImport();
+        Excel::import($shopImport, $file_path);
+        return '导入成功';
     }
 
 
+
+
+
 }
+

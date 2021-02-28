@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateShopsTable extends Migration
+class CreateImportErrorsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreateShopsTable extends Migration
      */
     public function up()
     {
-        Schema::create('shops', function (Blueprint $table) {
+        Schema::create('import_errors', function (Blueprint $table) {
             $table->id();
-            $table->string('shop_name')->unique()->comment("商户");
-            $table->string('mark')->nullable()->comment("备注");
+            $table->string('s_id')->comment('统计id');
+            $table->text('error_row')->comment("记录无法解析的行");
+            $table->text('error_reason')->comment("记录无法解析原因");
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ class CreateShopsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('shops');
+        Schema::dropIfExists('import_errors');
     }
 }

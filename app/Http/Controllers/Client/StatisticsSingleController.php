@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Imports\GoodImport;
 use App\Models\Good;
 use App\Models\Shop;
 use App\Models\Statistics;
 use App\Models\StatisticsSingle;
 use Illuminate\Http\Request;
+use App\Custom\Utils\PathUtils;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StatisticsSingleController extends Controller
 {
@@ -20,7 +23,17 @@ class StatisticsSingleController extends Controller
     {
         //
         $id = \request()->input('id');
-        $statisticsSingle = StatisticsSingle::whereSId($id)->get()->groupBy('shop_name');
+        $statisticsSingle = StatisticsSingle::whereSId($id)->orderByDesc('g_name')->get()->groupBy('shop_name');
+        $statisticsSingle = $statisticsSingle->toArray();
+//        $tmpdata = array();
+//        print_r($statisticsSingle);die;
+//        foreach ($statisticsSingle as $key => $item) {
+//            foreach ($item as $value) {
+//                isset($tmpdata[$key][$value['g_name']][$value['color']]) ? $tmpdata[$key][$value['g_name']][$value['color']] .= $value['size'] . "*" . $value['count'] . " " : $tmpdata[$key][$value['g_name']][$value['color']] = $value['size'] . "*" . $value['count'] . " ";
+//            }
+//        }
+
+
         return $this->ajaxSuccessResponse('刷新成功', $statisticsSingle);
     }
 
@@ -143,4 +156,24 @@ class StatisticsSingleController extends Controller
         }
         return $this->ajaxSuccessResponse('');
     }
+
+
+    /**
+     * 上传
+     * @return false|string
+     */
+    public function uploadImport($s_id)
+    {
+//        $s_id = \request()->input("s_id");
+        $file_path = request()->file('file')->store(PathUtils::getUploadImportPath());
+        //开始进行导入,,应该进行不了非常长的时间,所以就不放到后台进行导入
+//        $fliecontent = Storage::get($file_path);
+//        $fliecontent =  file('D:\Users\ys-8564\workspace\StatisticsShoes\storage\app\upload\import\2021-02-23\hPZbPfMxds0y3dFnA8HNhDVuQWIYvVN8pBhmabU4.txt');
+        $statistics = Statistics::whereId($s_id)->first();
+        $contactImport = new GoodImport($statistics);
+        Excel::import($contactImport, $file_path);
+        return '导入成功';
+    }
+
+
 }
