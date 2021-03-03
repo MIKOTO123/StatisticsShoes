@@ -71,76 +71,82 @@ class GoodImport extends DefaultValueBinder implements WithCustomValueBinder, Sk
 
     public function onRow(Row $row)
     {
+
         $rowIndex = $row->getIndex();
         $rowarr = $row->toArray();
         $rowstr = trim($rowarr[0]);
-        $tmparr = explode(' ', $rowstr);
-        $tmparr = array_values(array_filter($tmparr));
+        try {
+            $tmparr = explode(' ', $rowstr);
+            $tmparr = array_values(array_filter($tmparr));
 //        Log::debug("初始:" . print_r($tmparr, 1));
 //'shop_name', 'g_name', 'color', 'count'
-        if (empty($tmparr)) {
-            return;
-        }
-//        Logger::debugLog(print_r($tmparr, 1));
-        $g_name = $tmparr[0];
-        $color = $tmparr[1];
-        unset($data);
-        $data = array();
-        $data = [
-            's_id' => $this->statistics->id,
-            'g_name' => $g_name,
-            'color' => $color,
-        ];
-
-        //先查找鞋子到底是否存在
-        try {
-            $goodsAndShop = Good::whereGName($g_name)->leftJoin('shops', 'shops.id', '=', 'goods.shop_id')
-                ->select('goods.*', 'shops.shop_name')->get();
-            $shopcount = $goodsAndShop->count();
-            if ($shopcount > 1) {
-                throw new \Exception('商品有多个店家');
-            } elseif ($shopcount == 0) {
-                throw new \Exception('商品不存在');
+            if (empty($tmparr)) {
+                return;
             }
-            $data['shop_name'] = $goodsAndShop->toArray()[0]['shop_name'];
-        } catch (\Exception $e) {
-            //添加错误
-            $this->onError(new ImportException($e->getMessage(), 0, $rowstr));
-            return;
-        }
+//            Logger::debugLog(print_r($tmparr, 1));
+            $g_name = $tmparr[0];
+            $color = $tmparr[1];
+            unset($data);
+            $data = array();
+            $data = [
+                's_id' => $this->statistics->id,
+                'g_name' => $g_name,
+                'color' => $color,
+            ];
 
-
-        unset($tmparr[0]);
-        unset($tmparr[1]);
-        $tmparr = array_values($tmparr);//上下的全是码数
-
-        foreach ($tmparr as $item) {
-            //每次循环的时候,,unsetcount
-            unset($data['count']);
-            $size_and_count = explode('*', $item);
-            if (count($size_and_count) != 2) {
-                //格式不符合要求抛出异常
-                $this->onError(new ImportException('码数*数量不符合要求', 0, $rowstr));
-                continue;
-            }
-            $count = $size_and_count[1];
-            $data['size'] = $size_and_count[0];
+            //先查找鞋子到底是否存在
             try {
-                $statisticsSingle = StatisticsSingle::where($data)->first();
-                if (!$statisticsSingle) {
-                    $data['count'] = $count;
-                    $statisticsSingle = StatisticsSingle::create($data);
-                } else {
-                    $statisticsSingle->increment('count', $count);
+                $goodsAndShop = Good::whereGName($g_name)->leftJoin('shops', 'shops.id', '=', 'goods.shop_id')
+                    ->select('goods.*', 'shops.shop_name')->get();
+                $shopcount = $goodsAndShop->count();
+                if ($shopcount > 1) {
+                    throw new \Exception('商品有多个店家');
+                } elseif ($shopcount == 0) {
+                    throw new \Exception('商品不存在');
                 }
-//                Logger::debugLog(print_r($data, 1));
-                $statisticsSingle->save();
+                $data['shop_name'] = $goodsAndShop->toArray()[0]['shop_name'];
             } catch (\Exception $e) {
                 //添加错误
                 $this->onError(new ImportException($e->getMessage(), 0, $rowstr));
                 return;
             }
 
+
+            unset($tmparr[0]);
+            unset($tmparr[1]);
+            $tmparr = array_values($tmparr);//上下的全是码数
+
+            foreach ($tmparr as $item) {
+                //每次循环的时候,,unsetcount
+                unset($data['count']);
+                $size_and_count = explode('*', $item);
+                if (count($size_and_count) != 2) {
+                    //格式不符合要求抛出异常
+                    $this->onError(new ImportException('码数*数量不符合要求', 0, $rowstr));
+                    continue;
+                }
+                $count = $size_and_count[1];
+                $data['size'] = $size_and_count[0];
+                try {
+                    $statisticsSingle = StatisticsSingle::where($data)->first();
+                    if (!$statisticsSingle) {
+                        $data['count'] = $count;
+                        $statisticsSingle = StatisticsSingle::create($data);
+                    } else {
+                        $statisticsSingle->increment('count', $count);
+                    }
+//                Logger::debugLog(print_r($data, 1));
+                    $statisticsSingle->save();
+                } catch (\Exception $e) {
+                    //添加错误
+                    $this->onError(new ImportException($e->getMessage(), 0, $rowstr));
+                    return;
+                }
+
+            }
+        } catch (\Exception $error1) {
+            $this->onError(new ImportException($error1->getMessage(), 0, $rowstr));
+            return;
         }
 
 
