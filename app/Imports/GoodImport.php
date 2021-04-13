@@ -96,8 +96,10 @@ class GoodImport extends DefaultValueBinder implements WithCustomValueBinder, Sk
 
             //先查找鞋子到底是否存在
             try {
-                $goodsAndShop = Good::whereGName($g_name)->leftJoin('shops', 'shops.id', '=', 'goods.shop_id')
-                    ->select('goods.*', 'shops.shop_name')->get();
+                $goodsAndShop = Good::whereGName($g_name)
+                    ->leftJoin('shops', 'shops.id', '=', 'goods.shop_id')
+                    ->leftJoin('areas', 'areas.id', '=', 'shops.area_id')
+                    ->select('goods.*', 'shops.shop_name', 'areas.area')->get();
                 $shopcount = $goodsAndShop->count();
                 if ($shopcount > 1) {
                     throw new \Exception('商品有多个店家');
@@ -105,6 +107,7 @@ class GoodImport extends DefaultValueBinder implements WithCustomValueBinder, Sk
                     throw new \Exception('商品不存在');
                 }
                 $data['shop_name'] = $goodsAndShop->toArray()[0]['shop_name'];
+                $data['area'] = $goodsAndShop->toArray()[0]['area'];//应该是null
             } catch (\Exception $e) {
                 //添加错误
                 $this->onError(new ImportException($e->getMessage(), 0, $rowstr));
@@ -116,6 +119,7 @@ class GoodImport extends DefaultValueBinder implements WithCustomValueBinder, Sk
             unset($tmparr[1]);
             $tmparr = array_values($tmparr);//上下的全是码数
 
+            //$tmparr = [35*6, 40*3,41*2 , ... ]
             foreach ($tmparr as $item) {
                 //每次循环的时候,,unsetcount
                 unset($data['count']);

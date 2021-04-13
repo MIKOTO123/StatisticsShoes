@@ -138,6 +138,30 @@ export default [
 
 
     {
+        path: '/areas',
+        name: 'areas',
+        meta: {
+            icon: 'md-bookmarks',
+            title: '地区'
+        },
+        component: Main,
+        children: [
+            {
+                path: 'area',
+                name: '地区',
+                meta: {
+                    notCache: false,
+                    title: '地区',
+                    beforeCloseName: 'before_close_normal'
+                },
+                component: () => import('@/view/areas/area.vue')
+            },
+
+        ]
+    },
+
+
+    {
         path: '/401',
         name: 'error_401',
         meta: {

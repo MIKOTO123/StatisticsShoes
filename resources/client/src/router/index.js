@@ -7,7 +7,6 @@ import bus from '@common@/bus'
 import ViewUI from 'view-design';
 import {setToken, getToken, canTurnTo, setTitle} from '@/libs/util'
 import config from '@/config'
-import {GROUPLIST_LOADING_COMPLETED} from "@common@/bus/bus-constant";
 
 const {homeName} = config
 
@@ -39,10 +38,6 @@ const turnTo = (to, access, next) => {
  *  异步加载初始化数据
  */
 const init = () => {
-    //加载分组信息
-    store.dispatch('getGroupList').then(data => {
-        bus.$emit(GROUPLIST_LOADING_COMPLETED, data)
-    })
     //加载发票信息
     store.dispatch('getInvoiceInfo').then(data => {
     })

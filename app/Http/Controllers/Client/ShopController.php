@@ -29,7 +29,9 @@ class ShopController extends Controller
         $endDate = Carbon::parse(request()->input('endDate', Carbon::now()->toDateString()))->toDateTimeString();
         $searchValue = \request()->input('searchValue');
 
-        $query = Shop::whereBetween('created_at', [$beginDate, $endDate]);
+        $query = Shop::whereBetween('shops.created_at', [$beginDate, $endDate])
+            ->leftJoin('areas', 'shops.area_id', 'areas.id')
+            ->select('shops.*', 'area');
         if ($searchValue) {
             $query->where('shop_name', 'like', "%" . $searchValue . "%");
         }
@@ -108,6 +110,7 @@ class ShopController extends Controller
         try {
             $shop->shop_name = $data['shop_name'];
             $shop->mark = $data['mark'];
+            $shop->area_id = $data['area_id'];
             $shop->save();
         } catch (\Exception $e) {
             if ($e->getCode() == 23000) {
@@ -161,9 +164,6 @@ class ShopController extends Controller
         Excel::import($shopImport, $file_path);
         return '导入成功';
     }
-
-
-
 
 
 }

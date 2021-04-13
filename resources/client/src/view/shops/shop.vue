@@ -87,6 +87,19 @@
                 <FormItem label="商店名称:" prop="shop_name">
                     <Input v-model="formAddShop.shop_name" type="text" style="width: 300px;"></Input>
                 </FormItem>
+
+                <FormItem label="地区名称:" prop="area_id">
+                    <Select
+                        placeholder="请输入地区名称"
+                        style="width: 200px;"
+                        v-model="formAddShop.area_id"
+                        filterable
+                    >
+                        <Option v-for="(option, index) in areaOptions" :value="option.id" :key="index">
+                            {{option.area}}
+                        </Option>
+                    </Select>
+                </FormItem>
                 <FormItem label="说明：">
                     <Input
                         maxlength="255"
@@ -110,6 +123,18 @@
                 <FormItem label="商店名称:" prop="shop_name">
                     <Input v-model="formUpdateShop.shop_name" type="text" style="width: 300px;"></Input>
                 </FormItem>
+
+                <FormItem label="地区名称:" prop="area_id">
+                    <Select
+                        placeholder="请输入地区名称"
+                        style="width: 200px;"
+                        v-model="formUpdateShop.area_id"
+                        filterable
+                    >
+                        <Option v-for="(option, index) in areaOptions" :value="option.id" :key="index">{{option.area}}</Option>
+                    </Select>
+                </FormItem>
+
                 <FormItem label="说明：">
                     <Input
                         maxlength="255"
@@ -147,6 +172,7 @@
     import dayjs from "dayjs";
     import {shopCheck, shopDel, shopIndex, shopStore, shopUpdate} from "@/api/shop";
     import {SELECT_CHSNGE} from "@common@/bus/bus-constant";
+    import {areaIndex} from "@/api/area";
 
     export default {
         data() {
@@ -159,11 +185,13 @@
                     endDate: dayjs().format('YYYY-MM-DD'),
                 },
                 formAddShop: {
+                    area_id: 0,
                     shop_name: '',
                     mark: '',
                 },
                 formUpdateShop: {
                     id: 0,
+                    area_id: 0,
                     shop_name: '',
                     mark: '',
                 },
@@ -222,6 +250,10 @@
                         key: 'shop_name'
                     },
                     {
+                        title: '地区',
+                        key: 'area'
+                    },
+                    {
                         title: '备注',
                         key: 'mark'
                     },
@@ -233,7 +265,8 @@
                 ],
 
                 page_info: {},
-                dataTable: []
+                dataTable: [],
+                areaOptions: [],
             }
         },
         name: 'shop',
@@ -264,6 +297,7 @@
                 this.modalUpdateShop = true;
                 this.formUpdateShop.id = row.id;
                 this.formUpdateShop.shop_name = row.shop_name;
+                this.formUpdateShop.area_id = parseInt(row.area_id);
                 this.formUpdateShop.mark = row.mark;
             },
             clickDel(id) {
@@ -292,6 +326,7 @@
                                 //设置手机号码
                                 this.modalAddShop = false;//关闭对话框
                                 this.formAddShop.shop_name = '';
+                                this.formAddShop.area_id = 0;
                                 this.formAddShop.mark = '';
                                 this.initData();
                                 this.$Message.success(data.message);
@@ -323,6 +358,7 @@
                                 this.modalUpdateShop = false;//关闭对话框
                                 this.formUpdateShop.shop_name = '';
                                 this.formUpdateShop.mark = '';
+                                this.formUpdateShop.area_id = 0;
                                 this.initData();
                                 this.$Message.success(data.message);
                             } else {
@@ -347,7 +383,23 @@
                 this.formData.page = pageNo;
                 this.initData()
             },
+
+            getAreaOption() {
+                areaIndex().then(({data}) => {
+                    if (data.code == 0) {
+                        this.areaOptions = data.data;
+                    } else {
+                        this.$Message.error(data.message)
+                    }
+                }).catch(error => {
+                    this.$Message.error('请求有误');
+
+                })
+            },
             initData() {
+
+
+                this.getAreaOption();
 
                 this.$bus.$emit(SELECT_CHSNGE);
 

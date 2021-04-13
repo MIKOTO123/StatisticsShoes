@@ -4,11 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
-
 Route::namespace('Client')->prefix('contacts')->group(function () {
     Route::any('downLoadStandardXls', 'ContactsController@downLoadStandardXls');
 });
-
 
 
 Route::namespace('Client')->group(function ($router) {
@@ -20,6 +18,12 @@ Route::namespace('Client')->group(function ($router) {
         Route::any('getOptionsShop', 'ShopController@getOptionsShop');
         Route::any('shopImport', 'ShopController@shopImport');
     });
+
+
+    Route::prefix('area')->group(function () {
+        Route::any('checkExist', 'AreaController@checkExist');
+    });
+
 
     Route::prefix('good')->group(function () {
         Route::any('checkExist', 'GoodController@checkExist');
@@ -37,9 +41,9 @@ Route::namespace('Client')->group(function ($router) {
     });
 
 
-
     Route::resources([
         'shop' => "ShopController",
+        'area' => "AreaController",
         'good' => "GoodController",
         'statistics' => "StatisticsController",
         'statisticsSingle' => "StatisticsSingleController",

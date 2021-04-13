@@ -11,6 +11,6 @@ class StatisticsSingle extends Model
 {
     //
     protected $fillable = [
-        's_id', 'shop_name', 'g_name', 'color', 'size','count'
+        's_id', 'shop_name', 'g_name', 'color', 'size', 'count', 'area'
     ];
 }

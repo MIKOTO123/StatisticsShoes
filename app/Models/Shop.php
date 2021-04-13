@@ -12,7 +12,7 @@ class Shop extends Model
     //
 
     protected $fillable=[
-        'shop_name','mark'
+        'shop_name','mark','area_id'
     ];
 
 }

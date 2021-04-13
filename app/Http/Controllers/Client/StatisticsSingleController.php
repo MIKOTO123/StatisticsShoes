@@ -23,18 +23,14 @@ class StatisticsSingleController extends Controller
     {
         //
         $id = \request()->input('id');
-        $statisticsSingle = StatisticsSingle::whereSId($id)->orderByDesc('g_name')->get()->groupBy('shop_name');
-        $statisticsSingle = $statisticsSingle->toArray();
-//        $tmpdata = array();
-//        print_r($statisticsSingle);die;
-//        foreach ($statisticsSingle as $key => $item) {
-//            foreach ($item as $value) {
-//                isset($tmpdata[$key][$value['g_name']][$value['color']]) ? $tmpdata[$key][$value['g_name']][$value['color']] .= $value['size'] . "*" . $value['count'] . " " : $tmpdata[$key][$value['g_name']][$value['color']] = $value['size'] . "*" . $value['count'] . " ";
-//            }
-//        }
+        $statisticsSingle = StatisticsSingle::whereSId($id)->orderByDesc('g_name')->get()->groupBy('area');
 
-
-        return $this->ajaxSuccessResponse('刷新成功', $statisticsSingle);
+        //链式操作代替
+        $test = $statisticsSingle->map->groupby('shop_name');
+//        $test = $statisticsSingle->map(function ($item) {
+//            return $item->groupby('shop_name');
+//        });
+        return $this->ajaxSuccessResponse('刷新成功', $test);
     }
 
     /**
@@ -66,6 +62,9 @@ class StatisticsSingleController extends Controller
         isset($data['color']) ?: $data['color'] = '默认';
         $count = $data['count'];
         unset($data['count']);
+        //通过id设置地区
+        $data['area'] = Shop::whereShopName($data['shop_name'])->leftJoin('areas', 'shops.area_id', 'areas.id')->select('areas.area')->first()->area;
+
         //
         try {
             $statisticsSingle = StatisticsSingle::where($data)->first();
