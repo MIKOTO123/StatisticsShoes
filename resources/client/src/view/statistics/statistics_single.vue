@@ -94,23 +94,7 @@
                 </div>
             </Panel>
         </Collapse>
-
-<!--        <Collapse>-->
-<!--            <Panel v-for="(item, index) in alldata" :key="index">-->
-<!--                {{index}}-->
-
-<!--                <div slot="content">-->
-<!--                    <div v-for="(item2, index2) in item" :value="index2" :key="index2">-->
-<!--                        <strong>{{item2.g_name}}</strong>-->
-<!--                        <strong>{{item2.color}}</strong>-->
-<!--                        <strong>{{item2.size}}*{{item2.count}}</strong>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </Panel>-->
-
-<!--        </Collapse>-->
-
-
+        
         <Collapse simple>
             <Panel v-for="(item, index) in alldata" :key="index">
                 {{index}}
