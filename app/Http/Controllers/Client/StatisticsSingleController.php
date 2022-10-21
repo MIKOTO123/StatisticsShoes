@@ -23,7 +23,7 @@ class StatisticsSingleController extends Controller
     {
         //
         $id = \request()->input('id');
-        $statisticsSingle = StatisticsSingle::whereSId($id)->orderByDesc('g_name')->get()->groupBy('area');
+        $statisticsSingle = StatisticsSingle::whereSId($id)->orderByDesc('g_name')->get()->groupBy('area')->sortKeys();
 
         //链式操作代替
         $test = $statisticsSingle->map->groupby('shop_name');
